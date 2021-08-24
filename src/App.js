@@ -1,5 +1,6 @@
 import { BrowserRouter, Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./styles/style.css";
 import LeftMenu from "./components/leftMenu";
 import MyRouting from "./components/MyRouting";
 let menu = [
@@ -11,8 +12,12 @@ let menu = [
 function App() {
   return (
     <BrowserRouter>
-      <LeftMenu items={menu} />
-      <MyRouting />
+      <div className="wrapper">
+        <LeftMenu items={menu} />
+        <div id="content">
+          <MyRouting />
+        </div>
+      </div>
     </BrowserRouter>
   );
 }
