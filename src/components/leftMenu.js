@@ -4,10 +4,13 @@ const LeftMenu = (props) => {
   return (
     <>
       <Nav id="sidebar" navbar vertical>
-        <a class="navbar-brand" href="#">
-          {/* here I pass the logo url to the navbar image */}
-          <img src={props.logo} />
-        </a>
+        <div class="sidebar-header">
+          <h3>
+            <a class="navbar-brand" href="/">
+              My Logo
+            </a>
+          </h3>
+        </div>
         {/* here I pass the array of LIs into the UL */}
         <ul class="navbar-nav mr-auto">
           {props.items.map((item) => (

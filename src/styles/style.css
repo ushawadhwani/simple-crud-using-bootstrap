@@ -10,6 +10,14 @@
   background: #102351;
   color: #fff;
   transition: all 0.3s;
+  /* align-items: center; */
+}
+
+#sidebar .sidebar-header {
+  width: 100%;
+  color: #102351;
+  background: white;
+  text-transform: uppercase;
 }
 
 #content {
@@ -17,4 +25,12 @@
   padding: 20px;
   min-height: 100vh;
   transition: all 0.3s;
+}
+
+.navbar {
+  padding: 15px 10px;
+  background: #fff !important;
+  border: none;
+  border-radius: 0;
+  margin-bottom: 20px;
 }
