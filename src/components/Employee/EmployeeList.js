@@ -107,7 +107,7 @@ const EmployeeList = () => {
     }
   };
   const saveDataInList = (data) => {
-    var newData = [];
+    let newData = [];
     if (data.id === 0) {
       newData.push(data);
       employeeData.forEach((item) => {

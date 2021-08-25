@@ -31,7 +31,7 @@ const EmployeeModal = ({
 
   useEffect(() => {
     setError(false);
-    setId(selectedEmployee.id);
+    if (selectedEmployee.id) setId(selectedEmployee.id);
     setFirstName(selectedEmployee.firstName);
     setLastName(selectedEmployee.lastName);
     setEmail(selectedEmployee.email);
@@ -102,6 +102,11 @@ const EmployeeModal = ({
               onChange={({ target }) => setEmail(target.value)}
             />
           </Form>
+          {error && (
+            <div style={{ color: "red" }}>
+              Please enter the valid values (especially valid email)
+            </div>
+          )}
         </ModalBody>
         <ModalFooter className="justify-content-between bg-light">
           <Button
