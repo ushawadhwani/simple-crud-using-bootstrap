@@ -53,10 +53,4 @@ export const employeeList = [
     email: "payal@gmail.com",
     primaryLanguage: "English",
   },
-  {
-    firstName: "Usha",
-    lastName: "Wadhwani",
-    email: "usha@gmail.com",
-    primaryLanguage: "English",
-  },
 ];

@@ -1,4 +1,4 @@
-import React, { createRef } from "react";
+import React, { createRef, useState } from "react";
 import { CardHeader } from "reactstrap";
 import { Button, Card, CardBody, Col, Row } from "reactstrap";
 import paginationFactory, {
@@ -10,9 +10,18 @@ import { getPaginationArray } from "../../common/utils";
 import { employeeList } from "../../data/employeeList";
 
 const EmployeeList = (props) => {
+  const [employeeData, setemployeeData] = useState(employeeList);
+  const actionFormatter = (cell, row) => (
+    <>
+      <Button>Edit</Button>
+      <span style={{ marginLeft: 20 }}></span>
+      {/* just the space between the buttons */}
+      <Button>Delete</Button>
+    </>
+  );
   const options = {
     custom: true,
-    sizePerPage: 2,
+    sizePerPage: 5,
     totalSize: employeeList.length,
   };
   const columns = [
@@ -45,7 +54,16 @@ const EmployeeList = (props) => {
       text: "Language",
       classes: "border-0 py-2 align-middle",
     },
+    {
+      dataField: "",
+      headerClasses: "border-0",
+      text: "",
+      classes: "border-0 py-2 align-middle",
+      formatter: actionFormatter,
+      align: "right",
+    },
   ];
+
   let table = createRef();
   const handleNextPage =
     ({ page, onPageChange }) =>
@@ -58,92 +76,118 @@ const EmployeeList = (props) => {
     () => {
       onPageChange(page - 1);
     };
+
+  const filterTable = (searchValue) => {
+    if (searchValue == "") {
+      setemployeeData(employeeList);
+    } else {
+      var newEmployeeArray = employeeList.filter(function (item) {
+        return (
+          item.firstName.toLowerCase().indexOf(searchValue) > -1 ||
+          item.lastName.toLowerCase().indexOf(searchValue) > -1 ||
+          item.email.toLowerCase().indexOf(searchValue) > -1
+        );
+      });
+      setemployeeData(newEmployeeArray);
+    }
+  };
   return (
-    <Card className="mb-3">
-      <CardHeader>
-        <div class="align-items-center row">
-          <div class="col">
-            <h5 class="mb-0">Employee list</h5>
-          </div>
-          <div class="text-right col-auto">
-            <div class="form-inline">
-              <button type="button" class="btn btn-falcon-default btn-sm">
-                New
-              </button>
-            </div>
-          </div>
-        </div>
-      </CardHeader>
-      <CardBody className="p-0">
-        <PaginationProvider pagination={paginationFactory(options)}>
-          {({ paginationProps, paginationTableProps }) => {
-            const lastIndex =
-              paginationProps.page * paginationProps.sizePerPage;
-            return (
-              <>
-                <div className="table-responsive">
-                  <BootstrapTable
-                    ref={table}
-                    bootstrap4
-                    keyField="email"
-                    data={employeeList}
-                    columns={columns}
-                    bordered={false}
-                    classes="table-dashboard table-striped table-sm fs--1 border-bottom border-200 mb-0 table-dashboard-th-nowrap"
-                    rowClasses="btn-reveal-trigger border-top border-200"
-                    headerClasses="bg-200 text-900 border-y border-200"
-                    {...paginationTableProps}
-                  />
-                </div>
-                <Row
-                  noGutters
-                  className="py-3 justify-content-end"
-                  style={{ paddingRight: "20px" }}
-                >
-                  <Col xs="auto">
-                    <Button
-                      color="falcon-default"
-                      size="sm"
-                      onClick={handlePrevPage(paginationProps)}
-                      disabled={paginationProps.page === 1}
-                    >
-                      <FontAwesomeIcon icon="chevron-left" />
-                    </Button>
-                    {getPaginationArray(
-                      paginationProps.totalSize,
-                      paginationProps.sizePerPage
-                    ).map((pageNo) => (
+    <>
+      <Row>
+        <Col>
+          <h4>Employee list</h4>
+        </Col>
+      </Row>
+      <Card className="mb-3">
+        <CardHeader>
+          <Row>
+            <Col>
+              <Button>Add Employee</Button>
+            </Col>
+            <Col>
+              <input
+                className="form-control"
+                type="text"
+                placeholder="Search"
+                aria-label="Search"
+                onChange={(event) =>
+                  filterTable(event.target.value.toLowerCase())
+                }
+              />
+            </Col>
+          </Row>
+        </CardHeader>
+        <CardBody className="p-0">
+          <PaginationProvider pagination={paginationFactory(options)}>
+            {({ paginationProps, paginationTableProps }) => {
+              const lastIndex =
+                paginationProps.page * paginationProps.sizePerPage;
+              return (
+                <>
+                  <div className="table-responsive">
+                    <BootstrapTable
+                      ref={table}
+                      bootstrap4
+                      keyField="email"
+                      data={employeeData}
+                      columns={columns}
+                      bordered={false}
+                      classes="table-dashboard table-striped table-sm fs--1 border-bottom border-200 mb-0 table-dashboard-th-nowrap"
+                      rowClasses="btn-reveal-trigger border-top border-200"
+                      headerClasses="bg-200 text-900 border-y border-200"
+                      {...paginationTableProps}
+                    />
+                  </div>
+                  <Row
+                    noGutters
+                    className="py-3 justify-content-end"
+                    style={{ paddingRight: "20px" }}
+                  >
+                    <Col xs="auto">
                       <Button
-                        color={
-                          paginationProps.page === pageNo
-                            ? "falcon-primary"
-                            : "falcon-default"
-                        }
+                        color="falcon-default"
+                        size="sm"
+                        onClick={handlePrevPage(paginationProps)}
+                        disabled={paginationProps.page === 1}
+                      >
+                        <FontAwesomeIcon icon="chevron-left" />
+                      </Button>
+                      {getPaginationArray(
+                        paginationProps.totalSize,
+                        paginationProps.sizePerPage
+                      ).map((pageNo) => (
+                        <Button
+                          color={
+                            paginationProps.page === pageNo
+                              ? "falcon-primary"
+                              : "falcon-default"
+                          }
+                          size="sm"
+                          className="ml-2"
+                          onClick={() => paginationProps.onPageChange(pageNo)}
+                          key={pageNo}
+                        >
+                          {pageNo}
+                        </Button>
+                      ))}
+                      <Button
+                        color="falcon-default"
                         size="sm"
                         className="ml-2"
-                        onClick={() => paginationProps.onPageChange(pageNo)}
-                        key={pageNo}
+                        onClick={handleNextPage(paginationProps)}
+                        disabled={lastIndex >= paginationProps.totalSize}
                       >
-                        {pageNo}
+                        <FontAwesomeIcon icon="chevron-right" />
                       </Button>
-                    ))}
-                    <Button
-                      color="falcon-default"
-                      size="sm"
-                      className="ml-2"
-                      onClick={handleNextPage(paginationProps)}
-                      disabled={lastIndex >= paginationProps.totalSize}
-                    >
-                      <FontAwesomeIcon icon="chevron-right" />
-                    </Button>
-                  </Col>
-                </Row>
-              </>
-            );
-          }}
-        </PaginationProvider>
-      </CardBody>
-    </Card>
+                    </Col>
+                  </Row>
+                </>
+              );
+            }}
+          </PaginationProvider>
+        </CardBody>
+      </Card>
+    </>
   );
 };
 
