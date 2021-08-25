@@ -6,7 +6,7 @@ import MyRouting from "./components/MyRouting";
 let menu = [
   { label: "Home", url: "/" },
   { label: "About Us", url: "/about" },
-  { label: "Dashboard", url: "/dashboard" },
+  { label: "Employee", url: "/employees" },
 ];
 
 function App() {

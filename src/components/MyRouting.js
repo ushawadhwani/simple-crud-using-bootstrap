@@ -1,6 +1,7 @@
 import { Switch, Route } from "react-router-dom";
 import AboutUs from "./AboutUs";
-import Dashboard from "./Dashboard";
+import EmployeeList from "./Employee/EmployeeList";
+
 import Home from "./Home";
 
 export default function MyRouting() {
@@ -12,8 +13,8 @@ export default function MyRouting() {
       <Route path="/about">
         <AboutUs />
       </Route>
-      <Route path="/dashboard">
-        <Dashboard />
+      <Route path="/employees">
+        <EmployeeList />
       </Route>
     </Switch>
   );
