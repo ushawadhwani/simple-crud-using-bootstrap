@@ -8,15 +8,30 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import BootstrapTable from "react-bootstrap-table-next";
 import { getPaginationArray } from "../../common/utils";
 import { employeeList } from "../../data/employeeList";
+import EmployeeModal from "./EmployeeModal";
 
-const EmployeeList = (props) => {
+const EmployeeList = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const [employeeData, setemployeeData] = useState(employeeList);
+  const [selectedEmployee, setSelectedEmployee] = useState({});
+
+  const openModalToEdit = (row) => {
+    setSelectedEmployee(row);
+    setIsOpen(!isOpen);
+  };
+
+  const removeFromList = (row) => {
+    var newEmployeeArray = employeeData.filter(function (item) {
+      return item !== row;
+    });
+    setemployeeData(newEmployeeArray);
+  };
   const actionFormatter = (cell, row) => (
     <>
-      <Button>Edit</Button>
+      <Button onClick={() => openModalToEdit(row)}>Edit</Button>
       <span style={{ marginLeft: 20 }}></span>
       {/* just the space between the buttons */}
-      <Button>Delete</Button>
+      <Button onClick={() => removeFromList(row)}>Delete</Button>
     </>
   );
   const options = {
@@ -91,6 +106,24 @@ const EmployeeList = (props) => {
       setemployeeData(newEmployeeArray);
     }
   };
+  const saveDataInList = (data) => {
+    var newData = [];
+    if (data.id === 0) {
+      newData.push(data);
+      employeeData.forEach((item) => {
+        newData.push(item);
+      });
+    } else {
+      employeeData.forEach((item) => {
+        if (data.id === item.id) {
+          newData.push(data);
+        } else {
+          newData.push(item);
+        }
+      });
+    }
+    setemployeeData(newData);
+  };
   return (
     <>
       <Row>
@@ -102,7 +135,7 @@ const EmployeeList = (props) => {
         <CardHeader>
           <Row>
             <Col>
-              <Button>Add Employee</Button>
+              <Button onClick={() => setIsOpen(!isOpen)}>Add Employee</Button>
             </Col>
             <Col>
               <input
@@ -118,75 +151,91 @@ const EmployeeList = (props) => {
           </Row>
         </CardHeader>
         <CardBody className="p-0">
-          <PaginationProvider pagination={paginationFactory(options)}>
-            {({ paginationProps, paginationTableProps }) => {
-              const lastIndex =
-                paginationProps.page * paginationProps.sizePerPage;
-              return (
-                <>
-                  <div className="table-responsive">
-                    <BootstrapTable
-                      ref={table}
-                      bootstrap4
-                      keyField="email"
-                      data={employeeData}
-                      columns={columns}
-                      bordered={false}
-                      classes="table-dashboard table-striped table-sm fs--1 border-bottom border-200 mb-0 table-dashboard-th-nowrap"
-                      rowClasses="btn-reveal-trigger border-top border-200"
-                      headerClasses="bg-200 text-900 border-y border-200"
-                      {...paginationTableProps}
-                    />
-                  </div>
-                  <Row
-                    noGutters
-                    className="py-3 justify-content-end"
-                    style={{ paddingRight: "20px" }}
-                  >
-                    <Col xs="auto">
-                      <Button
-                        color="falcon-default"
-                        size="sm"
-                        onClick={handlePrevPage(paginationProps)}
-                        disabled={paginationProps.page === 1}
-                      >
-                        <FontAwesomeIcon icon="chevron-left" />
-                      </Button>
-                      {getPaginationArray(
-                        paginationProps.totalSize,
-                        paginationProps.sizePerPage
-                      ).map((pageNo) => (
+          {employeeData.length === 0 && (
+            <Row>
+              <Col className="align-center">No employees available</Col>
+            </Row>
+          )}
+          {employeeData.length > 0 && (
+            <PaginationProvider pagination={paginationFactory(options)}>
+              {({ paginationProps, paginationTableProps }) => {
+                const lastIndex =
+                  paginationProps.page * paginationProps.sizePerPage;
+                return (
+                  <>
+                    <div className="table-responsive">
+                      <BootstrapTable
+                        ref={table}
+                        bootstrap4
+                        keyField="email"
+                        data={employeeData}
+                        columns={columns}
+                        bordered={false}
+                        classes="table-dashboard table-striped table-sm fs--1 border-bottom border-200 mb-0 table-dashboard-th-nowrap"
+                        rowClasses="btn-reveal-trigger border-top border-200"
+                        headerClasses="bg-200 text-900 border-y border-200"
+                        {...paginationTableProps}
+                      />
+                    </div>
+                    <Row
+                      noGutters
+                      className="py-3 justify-content-end"
+                      style={{ paddingRight: "20px" }}
+                    >
+                      <Col xs="auto">
                         <Button
-                          color={
-                            paginationProps.page === pageNo
-                              ? "falcon-primary"
-                              : "falcon-default"
-                          }
+                          color="falcon-default"
+                          size="sm"
+                          onClick={handlePrevPage(paginationProps)}
+                          disabled={paginationProps.page === 1}
+                        >
+                          <FontAwesomeIcon icon="chevron-left" />
+                        </Button>
+                        {getPaginationArray(
+                          paginationProps.totalSize,
+                          paginationProps.sizePerPage
+                        ).map((pageNo) => (
+                          <Button
+                            color={
+                              paginationProps.page === pageNo
+                                ? "falcon-primary"
+                                : "falcon-default"
+                            }
+                            size="sm"
+                            className="ml-2"
+                            onClick={() => paginationProps.onPageChange(pageNo)}
+                            key={pageNo}
+                          >
+                            {pageNo}
+                          </Button>
+                        ))}
+                        <Button
+                          color="falcon-default"
                           size="sm"
                           className="ml-2"
-                          onClick={() => paginationProps.onPageChange(pageNo)}
-                          key={pageNo}
+                          onClick={handleNextPage(paginationProps)}
+                          disabled={lastIndex >= paginationProps.totalSize}
                         >
-                          {pageNo}
+                          <FontAwesomeIcon icon="chevron-right" />
                         </Button>
-                      ))}
-                      <Button
-                        color="falcon-default"
-                        size="sm"
-                        className="ml-2"
-                        onClick={handleNextPage(paginationProps)}
-                        disabled={lastIndex >= paginationProps.totalSize}
-                      >
-                        <FontAwesomeIcon icon="chevron-right" />
-                      </Button>
-                    </Col>
-                  </Row>
-                </>
-              );
-            }}
-          </PaginationProvider>
+                      </Col>
+                    </Row>
+                  </>
+                );
+              }}
+            </PaginationProvider>
+          )}
         </CardBody>
       </Card>
+      <EmployeeModal
+        selectedEmployee={selectedEmployee}
+        collapseOne={isOpen}
+        collapseOneOpen={() => {
+          setIsOpen(!isOpen);
+          setSelectedEmployee({});
+        }}
+        saveDataInList={saveDataInList}
+      />
     </>
   );
 };

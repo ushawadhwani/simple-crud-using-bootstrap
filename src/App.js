@@ -4,9 +4,9 @@ import "./styles/style.css";
 import LeftMenu from "./components/leftMenu";
 import MyRouting from "./components/MyRouting";
 let menu = [
-  { label: "Home", url: "/" },
+  { label: "Home", url: "/home" },
   { label: "About Us", url: "/about" },
-  { label: "Employee", url: "/employees" },
+  { label: "Employee", url: "/" },
 ];
 
 function App() {

@@ -7,13 +7,13 @@ import Home from "./Home";
 export default function MyRouting() {
   return (
     <Switch>
-      <Route exact path="/">
+      <Route exact path="/home">
         <Home />
       </Route>
       <Route path="/about">
         <AboutUs />
       </Route>
-      <Route path="/employees">
+      <Route path="/">
         <EmployeeList />
       </Route>
     </Switch>
